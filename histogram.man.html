@@ -1,0 +1,240 @@
+Content-type: text/html
+
+<HTML><HEAD><TITLE>Manpage of HISTOGRAM</TITLE>
+</HEAD><BODY>
+<H1>HISTOGRAM</H1>
+Section: User Contributed Perl Documentation (1)<BR>Updated: 2016-01-19<BR><A HREF="#index">Index</A>
+<A HREF="/man/man2html">Return to Main Contents</A><HR>
+
+
+
+
+
+
+<A NAME="lbAB">&nbsp;</A>
+<H2>NAME</H2>
+
+histogram - output a bar-graph representing frequency of inputs
+<A NAME="lbAC">&nbsp;</A>
+<H2>SYNOPSIS</H2>
+
+
+
+Normal operation:
+<P>
+
+<B>histogram</B> [<I>options</I>] ['<I>awk-program</I>'] [&lt;input-file&gt; ...]
+<P>
+
+Provide summary usage information concerning options:
+<P>
+
+<B>histogram</B> -h
+<P>
+
+Provide detailed usage information concerning options:
+<P>
+
+<B>histogram</B> -H
+<A NAME="lbAD">&nbsp;</A>
+<H2>DESCRIPTION</H2>
+
+
+
+Creates a histogram of the input data, using an awk-defined filter,
+and outputs to the tty a horizontal bar-graph representing the histogram.
+<P>
+
+After all <I>options</I> are processed, the first non-option argument is
+tested to see if it is a file that exists; if not, it is treated as an
+<I>awk-program</I> and is provided to <B>awk</B>. Otherwise, the <I>awk-program</I>
+provided to awk is simply <TT>&quot;{print}&quot;</TT>, so that awk behaves like <B>cat</B>. All
+arguments, including any awk-specific options and input-files, are
+passed as arguments to awk. Standard-input is also passed to awk. The
+output from awk is then read in by <B>histogram</B>, and each input line is
+grouped and counted. After all inputs have been consumed, <B>histogram</B>
+outputs a bar graph, where each output line represents one of the input
+lines and the frequency of that line's occurrence in the input stream.
+Unless otherwise specified (<B>-w</B>), the entire width of the <FONT SIZE="-1">TTY</FONT> is used,
+with the graph for the item of highest frequency using the full line
+width.  If an item is found only once, its frequency will be represented
+by at least one glyph.  A threshold (<B>-t</B>) can be set so that
+only items which appear <I>n</I> times in the input will appear in the output.
+<P>
+
+The output is by default sorted in alphanumeric order by the input line,
+or optionally by frequency (<B>-q</B>) of occurrence. This output order
+can be reversed (<B>-r</B>).  Optionally, the output can display an exact
+count (<B>-c</B>) beside each graph. Unless otherwise specified (with either
+<B>-x</B> or <B>-k</B>), the keys are right-aligned to a column which is the lesser of
+the longest key-length or 20% of the <FONT SIZE="-1">TTY</FONT> width. If the longest key is
+greater than this 20%, the output for each item is split onto two lines,
+one for the key and the other for the graph, but one-line output can be
+forced (<B>-x</B>, <B>-1</B>). The graph will be scaled from 1 to the maximum 
+frequency, but it can be also scaled from the minimum frequency found 
+to the maximum (<B>-m</B>). The maximum can be treated as the total number
+of items found and scaled accordingly; in this case, a graph representing
+this total is shown for comparison purposes (<B>-T</B>).
+<P>
+
+An <I>awk-program</I> looks like this:
+<BR>&nbsp;&nbsp;&nbsp;&lt;expression&gt;&nbsp;{&nbsp;<I>program</I>&nbsp;}
+<P>
+
+See the <B>awk</B> manual for how to formulate <I>expression</I> and
+<I>program</I>. It's usually as simple as a regular expression. See
+<FONT SIZE="-1">EXAMPLES</FONT> below.
+<A NAME="lbAE">&nbsp;</A>
+<H2>OPTIONS</H2>
+
+
+
+Many, some of which are passed to awk. See the output of either -h or -H.
+The input-files, if any, are passed to awk; if none are provided, awk
+will use <B>histogram</B>'s standard-input. The options -f, -F, -v, and -W are
+typical awk options; <B>histogram</B> always passes these arguments on to awk.
+<A NAME="lbAF">&nbsp;</A>
+<H2>ENVIRONMENT</H2>
+
+
+
+<DL COMPACT>
+<DT><FONT SIZE="-1">AWKPATH</FONT><DD>
+
+
+The path of the awk program to be used.
+<DT><FONT SIZE="-1">COLUMNS</FONT><DD>
+
+
+The width of the <FONT SIZE="-1">TTY,</FONT> usually changed by the shell upon <FONT SIZE="-1">SIGWINCH,</FONT> but can
+be overridden on the command line with B(&lt;-w&gt;).
+</DL>
+<A NAME="lbAG">&nbsp;</A>
+<H2>RETURN VALUE</H2>
+
+
+
+Zero on help and if something was output and no error.
+One if there was no input from awk to be processed (grep-like behavior).
+Otherwise, the error-code from awk is given.
+<A NAME="lbAH">&nbsp;</A>
+<H2>SEE ALSO</H2>
+
+
+
+awk
+<A NAME="lbAI">&nbsp;</A>
+<H2>EXAMPLES</H2>
+
+
+
+<DL COMPACT>
+<DT>Group error messages from /var/log/messages.<DD>
+
+
+
+
+<PRE>
+ grep 'error' /var/log/messages | histogram
+
+</PRE>
+
+
+<DT>Use histogram's built-in awk filter to histogram the hours of those messages:<DD>
+
+
+
+
+<PRE>
+ grep 'error' /var/log/messages | histogram '{ print substr($3,1,2) &quot;h&quot;; }'
+
+</PRE>
+
+
+<DT>The above command, where the graph is sorted by decreasing frequency, not the hour.<DD>
+
+
+
+
+<PRE>
+ grep 'error' /var/log/messages | histogram -q -r '{ print substr($3,1,2) &quot;h&quot;; }'
+
+</PRE>
+
+
+<DT>Just like the first command, now grouped by hostname; sort &amp; truncate hostnames to 10 characters.<DD>
+
+
+
+
+<PRE>
+ histogram -q -k 10 '/error/ { print $4 }' /var/log/messages
+
+</PRE>
+
+
+<DT>Same as the previous example, but include a graph representing the total items found:<DD>
+
+
+
+
+<PRE>
+ histogram -q -k 10 -T '/error/ { print $4 }' /var/log/messages
+
+</PRE>
+
+
+<DT>Same as before, but don't truncate or align the keys.<DD>
+
+
+
+
+<PRE>
+ histogram -q -T -x '/error/ { print $4 }' /var/log/messages
+
+</PRE>
+
+
+</DL>
+<A NAME="lbAJ">&nbsp;</A>
+<H2>VERSION</H2>
+
+
+
+Version 1.2
+<A NAME="lbAK">&nbsp;</A>
+<H2>AUTHOR &amp; COPYRIGHT</H2>
+
+
+
+Otheus &lt;<A HREF="mailto:otheus@gmail.com">otheus@gmail.com</A>&gt;
+<A NAME="lbAL">&nbsp;</A>
+<H2>LICENSE</H2>
+
+
+
+Licensed under <FONT SIZE="-1">GNU</FONT> Public License (<FONT SIZE="-1">GPL</FONT>) 2.0 or greater.
+<P>
+
+<HR>
+<A NAME="index">&nbsp;</A><H2>Index</H2>
+<DL>
+<DT><A HREF="#lbAB">NAME</A><DD>
+<DT><A HREF="#lbAC">SYNOPSIS</A><DD>
+<DT><A HREF="#lbAD">DESCRIPTION</A><DD>
+<DT><A HREF="#lbAE">OPTIONS</A><DD>
+<DT><A HREF="#lbAF">ENVIRONMENT</A><DD>
+<DT><A HREF="#lbAG">RETURN VALUE</A><DD>
+<DT><A HREF="#lbAH">SEE ALSO</A><DD>
+<DT><A HREF="#lbAI">EXAMPLES</A><DD>
+<DT><A HREF="#lbAJ">VERSION</A><DD>
+<DT><A HREF="#lbAK">AUTHOR &amp; COPYRIGHT</A><DD>
+<DT><A HREF="#lbAL">LICENSE</A><DD>
+</DL>
+<HR>
+This document was created by
+<A HREF="/man/man2html">man2html</A>,
+using the manual pages.<BR>
+Time: 14:04:00 GMT, January 19, 2016
+</BODY>
+</HTML>
