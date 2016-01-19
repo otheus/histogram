@@ -1,0 +1,110 @@
+NAME
+    histogram - output a bar-graph representing frequency of inputs
+
+SYNOPSIS
+    Normal operation:
+
+    histogram [*options*] ['*awk-program*'] [<input-file> ...]
+
+    Provide summary usage information concerning options:
+
+    histogram -h
+
+    Provide detailed usage information concerning options:
+
+    histogram -H
+
+DESCRIPTION
+    Creates a histogram of the input data, using an awk-defined filter, and
+    outputs to the tty a horizontal bar-graph representing the histogram.
+
+    After all *options* are processed, the first non-option argument is
+    tested to see if it is a file that exists; if not, it is treated as an
+    *awk-program* and is provided to awk. Otherwise, the *awk-program*
+    provided to awk is simply "{print}", so that awk behaves like cat. All
+    arguments, including any awk-specific options and input-files, are
+    passed as arguments to awk. Standard-input is also passed to awk. The
+    output from awk is then read in by histogram, and each input line is
+    grouped and counted. After all inputs have been consumed, histogram
+    outputs a bar graph, where each output line represents one of the input
+    lines and the frequency of that line's occurrence in the input stream.
+    Unless otherwise specified (-w), the entire width of the TTY is used,
+    with the graph for the item of highest frequency using the full line
+    width. If an item is found only once, its frequency will be represented
+    by at least one glyph. A threshold (-t) can be set so that only items
+    which appear *n* times in the input will appear in the output.
+
+    The output is by default sorted in alphanumeric order by the input line,
+    or optionally by frequency (-q) of occurrence. This output order can be
+    reversed (-r). Optionally, the output can display an exact count (-c)
+    beside each graph. Unless otherwise specified (with either -x or -k),
+    the keys are right-aligned to a column which is the lesser of the
+    longest key-length or 20% of the TTY width. If the longest key is
+    greater than this 20%, the output for each item is split onto two lines,
+    one for the key and the other for the graph, but one-line output can be
+    forced (-x, -1). The graph will be scaled from 1 to the maximum
+    frequency, but it can be also scaled from the minimum frequency found to
+    the maximum (-m). The maximum can be treated as the total number of
+    items found and scaled accordingly; in this case, a graph representing
+    this total is shown for comparison purposes (-T).
+
+    An *awk-program* looks like this: <expression> { *program* }
+
+    See the awk manual for how to formulate *expression* and *program*. It's
+    usually as simple as a regular expression. See EXAMPLES below.
+
+OPTIONS
+    Many, some of which are passed to awk. See the output of either -h or
+    -H. The input-files, if any, are passed to awk; if none are provided,
+    awk will use histogram's standard-input. The options -f, -F, -v, and -W
+    are typical awk options; histogram always passes these arguments on to
+    awk.
+
+ENVIRONMENT
+    AWKPATH
+         The path of the awk program to be used.
+
+    COLUMNS
+         The width of the TTY, usually changed by the shell upon SIGWINCH,
+         but can be overridden on the command line with B(<-w>).
+
+RETURN VALUE
+    Zero on help and if something was output and no error. One if there was
+    no input from awk to be processed (grep-like behavior). Otherwise, the
+    error-code from awk is given.
+
+SEE ALSO
+    awk
+
+EXAMPLES
+    Group error messages from /var/log/messages.
+        grep 'error' /var/log/messages | histogram
+
+    Use histogram's built-in awk filter to histogram the hours of those
+    messages:
+        grep 'error' /var/log/messages | histogram '{ print substr($3,1,2) "h"; }'
+
+    The above command, where the graph is sorted by decreasing frequency,
+    not the hour.
+        grep 'error' /var/log/messages | histogram -q -r '{ print substr($3,1,2) "h"; }'
+
+    Just like the first command, now grouped by hostname; sort & truncate
+    hostnames to 10 characters.
+        histogram -q -k 10 '/error/ { print $4 }' /var/log/messages
+
+    Same as the previous example, but include a graph representing the total
+    items found:
+        histogram -q -k 10 -T '/error/ { print $4 }' /var/log/messages
+
+    Same as before, but don't truncate or align the keys.
+        histogram -q -T -x '/error/ { print $4 }' /var/log/messages
+
+VERSION
+    Version 1.2
+
+AUTHOR & COPYRIGHT
+    Otheus <otheus@gmail.com>
+
+LICENSE
+    Licensed under GNU Public License (GPL) 2.0 or greater.
+
