@@ -13,3 +13,5 @@ CHANGELOG
 1.2 expanded help
 
 2016-01-19 : otheus : imported into git
+
+2016-01-20 : otheus : fixed -q option (was not honored at all)

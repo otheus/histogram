@@ -404,7 +404,7 @@ $kwidth=1 if $kwidth==0; # kwidth needs to be at least 1 from now on.
 # 
 #  #4#  - output graph
 # 
-foreach (&do_sort(\%h, $opt_r))  {
+foreach (&do_sort(\%h, $opt_r, $opt_q))  {
   if ($opt_x) {
     print $_,":";
   }
@@ -491,7 +491,7 @@ sub do_sort {
 
 =head1 VERSION
 
-Version 1.2
+Version 1.2.1
 
 =head1 AUTHOR & COPYRIGHT
 
@@ -514,3 +514,5 @@ Licensed under GNU Public License (GPL) 2.0 or greater.
 ## 1.1 other fixes, better awk option handling
 ##
 ## 1.2 expanded help
+##
+## 1.2.1 bug fix (-q option)
