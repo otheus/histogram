@@ -38,7 +38,7 @@ With output (first 8 lines) like:
 *Histogram is a wrapper for `awk .. | sort | uniq -c` and pretty-prints the output.* And more. To do this with histogram, just replace
 replace `|sort|uniq -c`| with `|histogram`, and the output looks like this:
 
-    $ awk -F\\t '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' | histogram
+    $ awk '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' | histogram
     11:00:-----------------------------------------------------------------------
     11:01:---------------------------------------------------------------
     11:02:---------------------------------------------------------------------
@@ -51,6 +51,36 @@ replace `|sort|uniq -c`| with `|histogram`, and the output looks like this:
 
 You could also replace `awk` itself with the same output.
 
-    $ histogram -F\\t '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }'
+    $ histogram '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }'
     
 Now you can visually see where there might be troughs or spikes in the dataset.
+
+## But I want to see the ranking of the  frequency and not the "key"? How do I do this?
+
+Use the `-q` option. If you want to see the top hits first, use `-r` in conjunction with `-q`. 
+
+Let's say you want to see the HTTP errors ranked by frequency.
+
+    $ histogram -q -r '{ print $6 }'
+
+You might get something like this:
+
+    200:----------------------------------------------------------------------------
+    304:-----------
+    302:--
+    403:--
+    400:-
+    404:-
+    417:-
+
+Of course, maybe you're more interested in the _bad hits_ only:
+
+    $ histogram -q -r '$6 !~ /^304|200$/ { print $6 }'
+    302:----------------------------------------------------------------------------
+    403:-------------------------------------------------------------------
+    400:------
+    404:-
+    417:-
+    
+That's more interesting.
+
