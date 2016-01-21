@@ -38,7 +38,8 @@ With output (first 8 lines) like:
 *Histogram is a wrapper for `awk .. | sort | uniq -c` and pretty-prints the output.* And more. To do this with histogram, just replace
 replace `|sort|uniq -c`| with `|histogram`, and the output looks like this:
 
-    $ awk -F\\t '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' | sort | uniq -c11:00:-----------------------------------------------------------------------
+    $ awk -F\\t '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' | histogram
+    11:00:-----------------------------------------------------------------------
     11:01:---------------------------------------------------------------
     11:02:---------------------------------------------------------------------
     11:03:--------------------------------------------------------------------
@@ -48,4 +49,8 @@ replace `|sort|uniq -c`| with `|histogram`, and the output looks like this:
     11:07:------------------------------------------------------------------------
     (... more lines, which we truncated for brevity)
 
-But
+You could also replace `awk` itself with the same output.
+
+    $ histogram -F\\t '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }'
+    
+Now you can visually see where there might be troughs or spikes in the dataset.
