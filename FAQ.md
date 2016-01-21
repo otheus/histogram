@@ -23,7 +23,7 @@ This will tell awk to examine the 3rd field to match the desired, and the 2nd fi
 occurred each minute in that time range, we can tell `awk` to output the hour and minute, then pass through sort,
 (hits don't always occur in order), then uniq -c. Like this:
 
-    awk -F\\t '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' | sort | uniq -c
+    awk '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' | sort | uniq -c
 
 With output (first 8 lines) like:
 
