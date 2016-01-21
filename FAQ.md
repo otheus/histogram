@@ -160,4 +160,7 @@ If you want to help me turn histogram into a Real Perl Module™, we could make 
 
 * Gap-interpolation. If your output has a sequence such as `1 2 3 7 8` you may or may not notice that 4, 5, and 6 are missing.
 * Statistical analysis.
-* 
+* Under-curve / area graphs. I've read that 'true histograms' are boxes, where the width of the box (when plotted on a proper x/y axis) is represented by the time. Hrmph. Not sure why that's useful. Maybe someone can explain it to me.
+* Vertical graphs. I don't know how to do this in a shell script without using very unportable termcap libraries. And then I'd have to write characters sideways in a terminal. 
+
+
