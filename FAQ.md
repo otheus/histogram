@@ -84,3 +84,32 @@ Of course, maybe you're more interested in the _bad hits_ only:
     
 That's more interesting.
 
+## I like the graph output but I also want to see the _counts_
+
+That's what the `-c` option is for. 
+
+Maybe we want to know "how many non-200/304 hits for each 10-minute interval?" Here's how to do that:
+
+    $ histogram -c -q '$6 !~ /^304|200$/ { print substr($2,1,4) "0" }'
+    01:40:- (1)
+    02:00:- (7)
+    03:10:- (1)
+    03:40:- (1)
+    04:10:- (1)
+    04:20:- (4)
+    04:50:- (4)
+    05:00:------------------------------------------------------------------- (2404)
+    05:10:- (1)
+    06:10:- (2)
+    
+## But why a wrapper for _awk_? Why not _perl_? 
+
+In fact, histogram will take input from _stdin_, so do your processing however you want, and pipe to _histogram_. I chose awk because for line-oriented and field-oriented files, `awk` rules. It's syntax is simpler than `perl` (or `ruby`). And most of the time, that's what I worked with. 
+
+If you want to help me turn histogram into a Real Perl Module™, we could make "phistogram" to wrap around `perl -lane`. 
+
+# What won't it do currently?
+
+* Gap-interpolation. If your output has a sequence such as `1 2 3 7 8` you may or may not notice that 4, 5, and 6 are missing.
+* Statistical analysis.
+* 
