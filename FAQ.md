@@ -36,7 +36,7 @@ With output (first 8 lines) like:
      72 11:06
      71 11:07
 
-*Histogram is a wrapper for `awk .. | sort | uniq -c` and pretty-prints the output.* And more. To do this with histogram, just replace
+**Histogram is a wrapper for `awk .. | sort | uniq -c` and pretty-prints the output.** And more. To do this with histogram, just replace
 replace `|sort|uniq -c`| with `|histogram`, and the output looks like this:
 
     $ awk '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' access.log | histogram
