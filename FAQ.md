@@ -156,6 +156,10 @@ In fact, histogram will take input from _stdin_, so do your processing however y
 
 If you want to help me turn histogram into a Real Perl Module™, we could make "phistogram" to wrap around `perl -lane`. 
 
+### What are the dependencies?
+
+`perl` version 5 and some form of `awk`. To my knowledge, any version of perl5 will work. 
+
 ### What won't it do currently?
 
 * Gap-interpolation. If your output has a sequence such as `1 2 3 7 8` you may or may not notice that 4, 5, and 6 are missing.
@@ -164,3 +168,8 @@ If you want to help me turn histogram into a Real Perl Module™, we could make 
 * Vertical graphs. I don't know how to do this in a shell script without using very unportable termcap libraries. And then I'd have to write characters sideways in a terminal. 
 
 
+### What's the TODO List?
+
+* Modularize the thing
+* Build test-cases
+* Package support for RedHat, Debian, etc
