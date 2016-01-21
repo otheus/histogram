@@ -26,6 +26,7 @@ occurred each minute in that time range, we can tell `awk` to output the hour an
     awk -F\\t '$3 == "2016-01-01" && $2 > "11:00:00" && $2 <= "14:00:00" { print substr($3,1,5); }' | sort | uniq -c
 
 With output (first 8 lines) like:
+
      70 11:00
      62 11:01
      68 11:02
